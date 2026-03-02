@@ -1,18 +1,23 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import { 
-  BookOpen, 
-  Trophy, 
-  ChevronRight, 
-  CheckCircle2, 
-  XCircle, 
-  RotateCcw, 
+import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "motion/react";
+import {
+  BookOpen,
+  Trophy,
+  ChevronRight,
+  CheckCircle2,
+  XCircle,
+  RotateCcw,
   Loader2,
   Sparkles,
   ArrowLeft,
-  Skull
-} from 'lucide-react';
-import { generateLesson, LessonData, VocabularyItem, QuizQuestion } from './services/geminiService';
+  Skull,
+} from "lucide-react";
+import {
+  generateLesson,
+  LessonData,
+  VocabularyItem,
+  QuizQuestion,
+} from "./services/geminiService";
 
 const TOPICS = [
   "Greetings & Introductions",
@@ -22,14 +27,14 @@ const TOPICS = [
   "Work & Career",
   "Travel & Vacation",
   "Shopping & Prices",
-  "Daily Routine"
+  "Daily Routine",
 ];
 
-type AppState = 'home' | 'loading' | 'lesson' | 'quiz' | 'result';
+type AppState = "home" | "loading" | "lesson" | "quiz" | "result";
 
 export default function App() {
-  const [state, setState] = useState<AppState>('home');
-  const [currentTopic, setCurrentTopic] = useState<string>('');
+  const [state, setState] = useState<AppState>("home");
+  const [currentTopic, setCurrentTopic] = useState<string>("");
   const [lessonData, setLessonData] = useState<LessonData | null>(null);
   const [currentQuizIndex, setCurrentQuizIndex] = useState(0);
   const [score, setScore] = useState(0);
@@ -39,27 +44,27 @@ export default function App() {
 
   const startLesson = async (topic: string) => {
     setCurrentTopic(topic);
-    setState('loading');
+    setState("loading");
     setError(null);
     try {
       const data = await generateLesson(topic);
       setLessonData(data);
-      setState('lesson');
+      setState("lesson");
     } catch (err) {
       console.error(err);
       setError("Failed to load lesson. Please try again.");
-      setState('home');
+      setState("home");
     }
   };
 
   const handleNextQuiz = () => {
     if (!lessonData) return;
     if (currentQuizIndex < lessonData.quiz.length - 1) {
-      setCurrentQuizIndex(prev => prev + 1);
+      setCurrentQuizIndex((prev) => prev + 1);
       setSelectedOption(null);
       setIsAnswered(false);
     } else {
-      setState('result');
+      setState("result");
     }
   };
 
@@ -68,12 +73,12 @@ export default function App() {
     setSelectedOption(option);
     setIsAnswered(true);
     if (option === lessonData.quiz[currentQuizIndex].correct_answer) {
-      setScore(prev => prev + 1);
+      setScore((prev) => prev + 1);
     }
   };
 
   const reset = () => {
-    setState('home');
+    setState("home");
     setLessonData(null);
     setCurrentQuizIndex(0);
     setScore(0);
@@ -90,13 +95,17 @@ export default function App() {
             <Skull className="text-white w-6 h-6" />
           </div>
           <div>
-            <h1 className="font-serif text-xl font-bold tracking-tight">Backstabbers</h1>
-            <p className="text-[10px] uppercase tracking-[0.2em] text-white/40 font-bold">English Learning</p>
+            <h1 className="font-serif text-xl font-bold tracking-tight">
+              Backstabbers
+            </h1>
+            <p className="text-[10px] uppercase tracking-[0.2em] text-white/40 font-bold">
+              English Learning
+            </p>
           </div>
         </div>
-        
-        {state !== 'home' && (
-          <button 
+
+        {state !== "home" && (
+          <button
             onClick={reset}
             className="p-2 hover:bg-white/5 rounded-full transition-colors"
           >
@@ -107,7 +116,7 @@ export default function App() {
 
       <main className="flex-1">
         <AnimatePresence mode="wait">
-          {state === 'home' && (
+          {state === "home" && (
             <motion.div
               key="home"
               initial={{ opacity: 0, y: 20 }}
@@ -116,8 +125,12 @@ export default function App() {
               className="space-y-6"
             >
               <div className="mb-8">
-                <h2 className="text-3xl font-serif font-bold mb-2">Ready to learn?</h2>
-                <p className="text-white/60">Choose a topic to start your bite-sized lesson.</p>
+                <h2 className="text-3xl font-serif font-bold mb-2">
+                  Ready to learn?
+                </h2>
+                <p className="text-white/60">
+                  Choose a topic to start your bite-sized lesson.
+                </p>
               </div>
 
               <div className="grid gap-4">
@@ -129,7 +142,9 @@ export default function App() {
                   >
                     <div className="flex items-center gap-4">
                       <div className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center text-white/40 group-hover:text-backstabber-red transition-colors">
-                        <span className="font-mono text-sm font-bold">0{idx + 1}</span>
+                        <span className="font-mono text-sm font-bold">
+                          0{idx + 1}
+                        </span>
                       </div>
                       <div>
                         <h3 className="font-bold text-lg">{topic}</h3>
@@ -143,7 +158,7 @@ export default function App() {
             </motion.div>
           )}
 
-          {state === 'loading' && (
+          {state === "loading" && (
             <motion.div
               key="loading"
               initial={{ opacity: 0 }}
@@ -157,12 +172,14 @@ export default function App() {
               </div>
               <div>
                 <h3 className="text-xl font-bold">Preparing your lesson...</h3>
-                <p className="text-white/40">Our AI is crafting the perfect content for you.</p>
+                <p className="text-white/40">
+                  Our AI is crafting the perfect content for you.
+                </p>
               </div>
             </motion.div>
           )}
 
-          {state === 'lesson' && lessonData && (
+          {state === "lesson" && lessonData && (
             <motion.div
               key="lesson"
               initial={{ opacity: 0, x: 20 }}
@@ -175,12 +192,16 @@ export default function App() {
                   <BookOpen className="w-3 h-3" />
                   Lesson
                 </div>
-                <h2 className="text-3xl font-serif font-bold">{lessonData.lesson_title}</h2>
+                <h2 className="text-3xl font-serif font-bold">
+                  {lessonData.lesson_title}
+                </h2>
                 <p className="text-white/60 italic">"{lessonData.objective}"</p>
               </div>
 
               <div className="space-y-4">
-                <h3 className="text-sm font-bold uppercase tracking-widest text-white/40">Vocabulary</h3>
+                <h3 className="text-sm font-bold uppercase tracking-widest text-white/40">
+                  Vocabulary
+                </h3>
                 <div className="grid gap-3">
                   {lessonData.vocabulary.map((item, idx) => (
                     <motion.div
@@ -191,14 +212,16 @@ export default function App() {
                       className="glass-card p-4 flex items-center justify-between"
                     >
                       <span className="font-bold text-lg">{item.en}</span>
-                      <span className="text-white/40 font-medium">{item.id}</span>
+                      <span className="text-white/40 font-medium">
+                        {item.id}
+                      </span>
                     </motion.div>
                   ))}
                 </div>
               </div>
 
-              <button 
-                onClick={() => setState('quiz')}
+              <button
+                onClick={() => setState("quiz")}
                 className="btn-primary w-full flex items-center justify-center gap-2"
               >
                 Start Quiz
@@ -207,7 +230,7 @@ export default function App() {
             </motion.div>
           )}
 
-          {state === 'quiz' && lessonData && (
+          {state === "quiz" && lessonData && (
             <motion.div
               key="quiz"
               initial={{ opacity: 0, scale: 0.95 }}
@@ -218,14 +241,23 @@ export default function App() {
               {/* Progress Bar */}
               <div className="space-y-2">
                 <div className="flex justify-between text-xs font-bold uppercase tracking-widest text-white/40">
-                  <span>Question {currentQuizIndex + 1} of {lessonData.quiz.length}</span>
-                  <span>{Math.round(((currentQuizIndex + 1) / lessonData.quiz.length) * 100)}%</span>
+                  <span>
+                    Question {currentQuizIndex + 1} of {lessonData.quiz.length}
+                  </span>
+                  <span>
+                    {Math.round(
+                      ((currentQuizIndex + 1) / lessonData.quiz.length) * 100,
+                    )}
+                    %
+                  </span>
                 </div>
                 <div className="h-2 bg-white/5 rounded-full overflow-hidden">
-                  <motion.div 
+                  <motion.div
                     className="h-full bg-backstabber-red"
                     initial={{ width: 0 }}
-                    animate={{ width: `${((currentQuizIndex + 1) / lessonData.quiz.length) * 100}%` }}
+                    animate={{
+                      width: `${((currentQuizIndex + 1) / lessonData.quiz.length) * 100}%`,
+                    }}
                   />
                 </div>
               </div>
@@ -237,12 +269,14 @@ export default function App() {
 
                 <div className="grid gap-3">
                   {lessonData.quiz[currentQuizIndex].options.map((option) => {
-                    const isCorrect = option === lessonData.quiz[currentQuizIndex].correct_answer;
+                    const isCorrect =
+                      option ===
+                      lessonData.quiz[currentQuizIndex].correct_answer;
                     const isSelected = selectedOption === option;
-                    
+
                     let bgColor = "bg-white/5 hover:bg-white/10";
                     let borderColor = "border-white/10";
-                    
+
                     if (isAnswered) {
                       if (isCorrect) {
                         bgColor = "bg-emerald-500/20";
@@ -263,8 +297,12 @@ export default function App() {
                         className={`w-full p-5 rounded-2xl border-2 text-left transition-all flex items-center justify-between ${bgColor} ${borderColor}`}
                       >
                         <span className="font-medium">{option}</span>
-                        {isAnswered && isCorrect && <CheckCircle2 className="w-5 h-5 text-emerald-500" />}
-                        {isAnswered && isSelected && !isCorrect && <XCircle className="w-5 h-5 text-red-500" />}
+                        {isAnswered && isCorrect && (
+                          <CheckCircle2 className="w-5 h-5 text-emerald-500" />
+                        )}
+                        {isAnswered && isSelected && !isCorrect && (
+                          <XCircle className="w-5 h-5 text-red-500" />
+                        )}
                       </button>
                     );
                   })}
@@ -280,15 +318,19 @@ export default function App() {
                   >
                     <div className="p-5 rounded-2xl bg-white/5 border border-white/10">
                       <p className="text-sm text-white/60 leading-relaxed">
-                        <span className="font-bold text-white block mb-1">Explanation:</span>
+                        <span className="font-bold text-white block mb-1">
+                          Explanation:
+                        </span>
                         {lessonData.quiz[currentQuizIndex].explanation}
                       </p>
                     </div>
-                    <button 
+                    <button
                       onClick={handleNextQuiz}
                       className="btn-primary w-full"
                     >
-                      {currentQuizIndex < lessonData.quiz.length - 1 ? 'Next Question' : 'Finish Quiz'}
+                      {currentQuizIndex < lessonData.quiz.length - 1
+                        ? "Next Question"
+                        : "Finish Quiz"}
                     </button>
                   </motion.div>
                 )}
@@ -296,7 +338,7 @@ export default function App() {
             </motion.div>
           )}
 
-          {state === 'result' && lessonData && (
+          {state === "result" && lessonData && (
             <motion.div
               key="result"
               initial={{ opacity: 0, scale: 0.9 }}
@@ -307,10 +349,10 @@ export default function App() {
                 <div className="w-32 h-32 bg-backstabber-red/20 rounded-full flex items-center justify-center mx-auto">
                   <Trophy className="w-16 h-16 text-backstabber-red" />
                 </div>
-                <motion.div 
+                <motion.div
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
-                  transition={{ type: 'spring', delay: 0.5 }}
+                  transition={{ type: "spring", delay: 0.5 }}
                   className="absolute -top-2 -right-2 bg-yellow-400 text-black font-bold px-3 py-1 rounded-full text-sm"
                 >
                   +{score * 10} XP
@@ -318,24 +360,27 @@ export default function App() {
               </div>
 
               <div>
-                <h2 className="text-4xl font-serif font-bold mb-2">Lesson Complete!</h2>
+                <h2 className="text-4xl font-serif font-bold mb-2">
+                  Lesson Complete!
+                </h2>
                 <p className="text-white/60">
-                  You scored <span className="text-white font-bold">{score}</span> out of <span className="text-white font-bold">{lessonData.quiz.length}</span>
+                  You scored{" "}
+                  <span className="text-white font-bold">{score}</span> out of{" "}
+                  <span className="text-white font-bold">
+                    {lessonData.quiz.length}
+                  </span>
                 </p>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
-                <button 
+                <button
                   onClick={() => startLesson(currentTopic)}
                   className="btn-secondary flex items-center justify-center gap-2"
                 >
                   <RotateCcw className="w-5 h-5" />
                   Retry
                 </button>
-                <button 
-                  onClick={reset}
-                  className="btn-primary"
-                >
+                <button onClick={reset} className="btn-primary">
                   Home
                 </button>
               </div>
