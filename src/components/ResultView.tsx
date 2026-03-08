@@ -8,7 +8,12 @@ interface ResultViewProps {
   onHome: () => void;
 }
 
-export default function ResultView({ score, totalQuestions, onRetry, onHome }: ResultViewProps) {
+export function ResultView({
+  score,
+  totalQuestions,
+  onRetry,
+  onHome,
+}: ResultViewProps) {
   return (
     <motion.div
       key="result"
@@ -31,13 +36,10 @@ export default function ResultView({ score, totalQuestions, onRetry, onHome }: R
       </div>
 
       <div>
-        <h2 className="text-4xl font-serif font-bold mb-2">
-          Lesson Complete!
-        </h2>
+        <h2 className="text-4xl font-serif font-bold mb-2">Lesson Complete!</h2>
         <p className="text-white/60">
-          You scored{" "}
-          <span className="text-white font-bold">{score}</span> out of{" "}
-          <span className="text-white font-bold">{totalQuestions}</span>
+          You scored <span className="text-white font-bold">{score}</span> out
+          of <span className="text-white font-bold">{totalQuestions}</span>
         </p>
       </div>
 

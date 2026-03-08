@@ -12,7 +12,7 @@ interface QuizViewProps {
   onNext: () => void;
 }
 
-export default function QuizView({
+export function QuizView({
   question,
   currentIndex,
   totalQuestions,
@@ -110,10 +110,7 @@ export default function QuizView({
                 {question.explanation}
               </p>
             </div>
-            <button
-              onClick={onNext}
-              className="btn-primary w-full"
-            >
+            <button onClick={onNext} className="btn-primary w-full">
               {currentIndex < totalQuestions - 1
                 ? "Next Question"
                 : "Finish Quiz"}

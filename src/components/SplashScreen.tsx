@@ -1,7 +1,7 @@
 import { motion } from "motion/react";
 import { Skull, Sparkles } from "lucide-react";
 
-export default function SplashScreen() {
+export function SplashScreen() {
   return (
     <motion.div
       initial={{ opacity: 0 }}

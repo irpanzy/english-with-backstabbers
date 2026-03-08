@@ -7,7 +7,7 @@ interface LessonViewProps {
   onStartQuiz: () => void;
 }
 
-export default function LessonView({ lessonData, onStartQuiz }: LessonViewProps) {
+export function LessonView({ lessonData, onStartQuiz }: LessonViewProps) {
   return (
     <motion.div
       key="lesson"
@@ -41,9 +41,7 @@ export default function LessonView({ lessonData, onStartQuiz }: LessonViewProps)
               className="glass-card p-4 flex items-center justify-between"
             >
               <span className="font-bold text-lg">{item.en}</span>
-              <span className="text-white/40 font-medium">
-                {item.id}
-              </span>
+              <span className="text-white/40 font-medium">{item.id}</span>
             </motion.div>
           ))}
         </div>

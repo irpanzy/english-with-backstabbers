@@ -1,7 +1,7 @@
 import { motion } from "motion/react";
 import { Loader2, Sparkles } from "lucide-react";
 
-export default function LoadingScreen() {
+export function LoadingScreen() {
   return (
     <motion.div
       key="loading"

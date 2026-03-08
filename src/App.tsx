@@ -1,16 +1,14 @@
 import { useState, useEffect } from "react";
 import { AnimatePresence } from "motion/react";
 import { generateLesson, LessonData } from "./services/geminiService";
-import {
-  SplashScreen,
-  Header,
-  Footer,
-  TopicSelection,
-  LoadingScreen,
-  LessonView,
-  QuizView,
-  ResultView,
-} from "./components";
+import { SplashScreen } from "./components/SplashScreen";
+import { Header } from "./components/Header";
+import { Footer } from "./components/Footer";
+import { TopicSelection } from "./components/TopicSelection";
+import { LoadingScreen } from "./components/LoadingScreen";
+import { LessonView } from "./components/LessonView";
+import { QuizView } from "./components/QuizView";
+import { ResultView } from "./components/ResultView";
 
 const TOPICS = [
   "Greetings & Introductions",
