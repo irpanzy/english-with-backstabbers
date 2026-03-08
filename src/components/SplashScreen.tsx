@@ -7,7 +7,7 @@ export function SplashScreen() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="min-h-screen flex items-center justify-center bg-linear-to-br from-gray-900 via-gray-800 to-black overflow-hidden relative"
+      className="min-h-screen flex items-center justify-center bg-linear-to-br from-gray-900 via-gray-800 to-black overflow-hidden relative px-4"
     >
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden">
@@ -18,7 +18,7 @@ export function SplashScreen() {
             opacity: [0.1, 0.2, 0.1],
           }}
           transition={{ duration: 3, repeat: Infinity }}
-          className="absolute top-1/4 left-1/4 w-96 h-96 bg-backstabber-red rounded-full blur-3xl"
+          className="absolute top-1/4 left-1/4 w-64 h-64 md:w-96 md:h-96 bg-backstabber-red rounded-full blur-3xl"
         />
         <motion.div
           animate={{
@@ -27,7 +27,7 @@ export function SplashScreen() {
             opacity: [0.1, 0.15, 0.1],
           }}
           transition={{ duration: 4, repeat: Infinity, delay: 0.5 }}
-          className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-600 rounded-full blur-3xl"
+          className="absolute bottom-1/4 right-1/4 w-64 h-64 md:w-96 md:h-96 bg-purple-600 rounded-full blur-3xl"
         />
       </div>
 
@@ -63,12 +63,12 @@ export function SplashScreen() {
         </motion.div>
 
         {/* Title with stagger animation */}
-        <div className="space-y-4">
+        <div className="space-y-4 px-4">
           <motion.h1
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.5 }}
-            className="font-serif text-5xl font-bold tracking-tight"
+            transition={{ delay: 0.5, type: "spring", stiffness: 100 }}
+            className="font-serif text-4xl md:text-5xl font-bold tracking-tight"
           >
             Backstabbers
           </motion.h1>
@@ -76,7 +76,7 @@ export function SplashScreen() {
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.7 }}
-            className="text-sm uppercase tracking-[0.3em] text-white/60 font-bold"
+            className="text-xs md:text-sm uppercase tracking-[0.2em] md:tracking-[0.3em] text-white/60 font-bold"
           >
             English Learning Platform
           </motion.p>
@@ -123,9 +123,9 @@ export function SplashScreen() {
           rotate: [0, 180, 360],
         }}
         transition={{ duration: 2, repeat: Infinity, delay: 0.3 }}
-        className="absolute top-20 right-20"
+        className="absolute top-10 right-4 md:top-20 md:right-20"
       >
-        <Sparkles className="w-6 h-6 text-yellow-400" />
+        <Sparkles className="w-5 h-5 md:w-6 md:h-6 text-yellow-400" />
       </motion.div>
       <motion.div
         animate={{
@@ -133,9 +133,9 @@ export function SplashScreen() {
           rotate: [0, -180, -360],
         }}
         transition={{ duration: 2.5, repeat: Infinity, delay: 0.8 }}
-        className="absolute bottom-32 left-16"
+        className="absolute bottom-20 left-4 md:bottom-32 md:left-16"
       >
-        <Sparkles className="w-5 h-5 text-purple-400" />
+        <Sparkles className="w-4 h-4 md:w-5 md:h-5 text-purple-400" />
       </motion.div>
     </motion.div>
   );
