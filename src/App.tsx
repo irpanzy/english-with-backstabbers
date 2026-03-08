@@ -50,9 +50,9 @@ export default function App() {
       const data = await generateLesson(topic);
       setLessonData(data);
       setState("lesson");
-    } catch (err) {
-      console.error(err);
-      setError("Failed to load lesson. Please try again.");
+    } catch (err: any) {
+      const errorMessage = err?.message || "Failed to load lesson. Please try again.";
+      setError(errorMessage);
       setState("home");
     }
   };
@@ -91,7 +91,7 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen max-w-2xl mx-auto px-4 py-8 flex flex-col">
+    <div className="min-h-screen max-w-2xl mx-auto px-4 md:px-6 py-6 md:py-8 flex flex-col">
       <Header
         showBackButton={state !== "home"}
         onBackClick={reset}
@@ -101,7 +101,12 @@ export default function App() {
       <main className="flex-1">
         <AnimatePresence mode="wait">
           {state === "home" && (
-            <TopicSelection topics={TOPICS} onTopicSelect={startLesson} />
+            <TopicSelection 
+              topics={TOPICS} 
+              onTopicSelect={startLesson}
+              error={error}
+              onErrorClose={() => setError(null)}
+            />
           )}
 
           {state === "loading" && <LoadingScreen />}
