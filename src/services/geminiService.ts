@@ -1,5 +1,3 @@
-import { GoogleGenAI, Type } from "@google/genai";
-
 const SYSTEM_INSTRUCTION = `Anda adalah desainer kurikulum bahasa Inggris yang kreatif. Saya sedang membangun aplikasi web belajar bahasa Inggris khusus pemula bernama "English With Backstabbers". Konsep aplikasinya menyerupai Duolingo: mengandalkan micro-learning, gamifikasi, dan soal kuis interaktif.
 
 Tugas Anda adalah merancang modul pelajaran singkat setiap kali saya memberikan topik. Karena aplikasi ini ditujukan untuk pemula mutlak, gunakan bahasa penjelasan yang santai, mudah dipahami, dan relevan dengan percakapan sehari-hari.
@@ -31,53 +29,96 @@ export interface LessonData {
 }
 
 export async function generateLesson(topic: string): Promise<LessonData> {
-  const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "" });
-  
-  const response = await ai.models.generateContent({
-    model: "gemini-3-flash-preview",
-    contents: topic,
-    config: {
-      systemInstruction: SYSTEM_INSTRUCTION,
-      responseMimeType: "application/json",
-      responseSchema: {
-        type: Type.OBJECT,
-        properties: {
-          lesson_title: { type: Type.STRING },
-          objective: { type: Type.STRING },
-          vocabulary: {
-            type: Type.ARRAY,
-            items: {
-              type: Type.OBJECT,
-              properties: {
-                en: { type: Type.STRING },
-                id: { type: Type.STRING }
-              },
-              required: ["en", "id"]
-            }
-          },
-          quiz: {
-            type: Type.ARRAY,
-            items: {
-              type: Type.OBJECT,
-              properties: {
-                question: { type: Type.STRING },
-                options: {
-                  type: Type.ARRAY,
-                  items: { type: Type.STRING }
-                },
-                correct_answer: { type: Type.STRING },
-                explanation: { type: Type.STRING }
-              },
-              required: ["question", "options", "correct_answer", "explanation"]
-            }
-          }
-        },
-        required: ["lesson_title", "objective", "vocabulary", "quiz"]
-      }
-    }
-  });
+  const apiKey = process.env.GEMINI_API_KEY;
 
-  const text = response.text;
-  if (!text) throw new Error("No response from AI");
-  return JSON.parse(text) as LessonData;
+  if (!apiKey) {
+    throw new Error(
+      "API key tidak ditemukan. Silakan set GEMINI_API_KEY di file .env",
+    );
+  }
+
+  const modelsToTry = [
+    "gemini-2.5-flash",
+    "gemini-2.0-flash",
+    "gemini-2.0-flash-001",
+    "gemini-2.5-pro",
+  ];
+
+  for (const model of modelsToTry) {
+    try {
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+
+      const requestBody = {
+        contents: [
+          {
+            parts: [
+              {
+                text: `${SYSTEM_INSTRUCTION}\n\nTopic: ${topic}\n\nGenerate a complete lesson in JSON format.`,
+              },
+            ],
+          },
+        ],
+        generationConfig: {
+          temperature: 0.7,
+          topK: 40,
+          topP: 0.95,
+          maxOutputTokens: 2048,
+        },
+      };
+
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(requestBody),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(JSON.stringify(errorData));
+      }
+
+      const data = await response.json();
+      const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+
+      if (!text) {
+        throw new Error("No response text from AI");
+      }
+
+      const jsonMatch = text.match(/\{[\s\S]*\}/);
+      if (!jsonMatch) {
+        throw new Error("No valid JSON found in response");
+      }
+
+      const lessonData = JSON.parse(jsonMatch[0]) as LessonData;
+
+      if (
+        !lessonData.lesson_title ||
+        !lessonData.vocabulary ||
+        !lessonData.quiz
+      ) {
+        throw new Error("Invalid lesson data structure");
+      }
+
+      return lessonData;
+    } catch (error: any) {
+      const errorMsg = error?.message || String(error);
+
+      if (errorMsg.includes("404") || errorMsg.includes("NOT_FOUND")) {
+        continue;
+      }
+
+      if (errorMsg.includes("503") || errorMsg.includes("UNAVAILABLE")) {
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        continue;
+      }
+
+      throw error;
+    }
+  }
+
+  throw new Error(
+    "Gagal membuat pelajaran. Silakan coba lagi atau cek koneksi internet Anda.",
+  );
 }
