@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { AnimatePresence } from "motion/react";
+import { Analytics } from "@vercel/analytics/react";
 import { generateLesson, LessonData } from "./services/geminiService";
 import { SplashScreen } from "./components/SplashScreen";
 import { Header } from "./components/Header";
@@ -142,6 +143,7 @@ export default function App() {
       </main>
 
       <Footer />
+      <Analytics />
     </div>
   );
 }
